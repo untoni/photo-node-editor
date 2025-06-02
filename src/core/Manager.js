@@ -1,9 +1,8 @@
-import Components from './Components'
+import {DragBlockComponent} from '../components/componentsAll.js'
 
 class InitialComponents {
-	constructor(manager, typeBlockData) {
+	constructor(manager) {
 		this.manager = manager;
-		this.typeBlockData = typeBlockData;
 	}
 
 
@@ -37,14 +36,14 @@ class InitialComponents {
 			listbox: (data, input, output) => {
 				return new ControlComponent_listbox(data, {input, output}).setManager(this.manager.callback);
 			},
-		}
+		},
 		control: (data) => {
-			const {input, output, ...dataSettings} = data;
+			const {input, output, typeControl, ...dataSettings} = data;
 
-			const control = this.#componentsTypeInitial.[typeData]({id, name, paramenters}, this.parserToComponents(input), this.parserToComponents(output))
+			const control = this.#componentsTypeInitial[typeControl](dataSettings, this.parserToComponents(input), this.parserToComponents(output))
 			this.manager.addClassListener('control', id, control);
 			return control;
-		}
+		},
 		input: (data) => {
 			const input = new InputComponent(data).setManager(this.manager.callback);
 
@@ -74,8 +73,8 @@ class InitialComponents {
 		block: (data) => {
 			let {typeBlock, childrens, ...dataSettings} = data;
 			childrens = this.initialChildren(childrens);
-
-			const typeBlockData = this.typeBlockData[typeBlock];
+			
+			const typeBlockData = BlockManager.typeBlockData[typeBlock];
 			const block = new DragBlockComponent({...dataSettings, typeBlockData}, childrens).setManager(this.manager.callback);
 			return block;	
 		},
@@ -108,13 +107,18 @@ class InitialComponents {
 
 export default class BlockManager{
 	#components = {};
+
+	static setTypeBlockData(typeBlockData) {
+		BlockManager.typeBlockData = typeBlockData;
+	}
+	static typeBlockData;
+
 	#blockComponent;
 
 	#logic;
 
-	constructor(blockData, rootComponent, typeBlockData) {
-		this.#blockComponent = new InitialComponents(this, , typeBlockData)
-															.initialBlock(blockData.interfaceData, rootComponent);
+	constructor(blockData, rootComponent) {
+		this.#blockComponent = new InitialComponents(this).initialBlock(blockData.interfaceData, rootComponent);
 		this.#logic = new BlockLogic(this, blockData.functionBlock);
 	}
 
@@ -122,8 +126,10 @@ export default class BlockManager{
 		this.#components[type][id] = component; //input, output, control, folder
 	}
 
-	callback() {
+	callback = {
+		sendValue: (id, value) => {
 
+		}
 	}
 }
 

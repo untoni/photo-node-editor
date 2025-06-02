@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+}
+
+.node-space {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+.node-space #root {
+    position: absolute;
+    width: 100%;
+}
